@@ -29,6 +29,7 @@ import (
 	"github.com/ethereum/go-ethereum/console/prompt"
 	"github.com/ethereum/go-ethereum/internal/ethapi"
 	"github.com/ethereum/go-ethereum/log"
+	"regexp"
 )
 
 type CommandlineUI struct {
@@ -237,7 +238,9 @@ func (ui *CommandlineUI) ShowError(message string) {
 
 // ShowInfo displays info message to user
 func (ui *CommandlineUI) ShowInfo(message string) {
-	fmt.Printf("## Info \n%s\n", message)
+	// Redact sensitive data from the message
+	redactedMessage := sanitizeMessage(message)
+	fmt.Printf("## Info \n%s\n", redactedMessage)
 }
 
 func (ui *CommandlineUI) OnApprovedTx(tx ethapi.SignTransactionResult) {
@@ -278,4 +281,10 @@ func (ui *CommandlineUI) OnSignerStartup(info StartupInfo) {
 		fmt.Printf("* %v : %v\n", k, v)
 	}
 	go ui.showAccounts()
+}
+// sanitizeMessage redacts sensitive data such as passwords from the input message.
+func sanitizeMessage(message string) string {
+	// Example: Redact anything that looks like a password (e.g., "password=...")
+	re := regexp.MustCompile(`(?i)(password\s*=\s*).*?(\s|$)`)
+	return re.ReplaceAllString(message, "${1}[REDACTED]${2}")
 }
