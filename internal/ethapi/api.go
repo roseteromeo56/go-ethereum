@@ -353,7 +353,11 @@ type StorageResult struct {
 type proofList []string
 
 func (n *proofList) Put(key []byte, value []byte) error {
-	*n = append(*n, hexutil.Encode(value))
+	encodedValue, err := hexutil.Encode(value)
+	if err != nil {
+		return err
+	}
+	*n = append(*n, encodedValue)
 	return nil
 }
 
