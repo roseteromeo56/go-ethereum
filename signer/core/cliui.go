@@ -282,9 +282,18 @@ func (ui *CommandlineUI) OnSignerStartup(info StartupInfo) {
 	}
 	go ui.showAccounts()
 }
-// sanitizeMessage redacts sensitive data such as passwords from the input message.
+// sanitizeMessage redacts sensitive data such as passwords, API keys, and tokens from the input message.
 func sanitizeMessage(message string) string {
-	// Example: Redact anything that looks like a password (e.g., "password=...")
-	re := regexp.MustCompile(`(?i)(password\s*=\s*).*?(\s|$)`)
-	return re.ReplaceAllString(message, "${1}[REDACTED]${2}")
+	// Define patterns for sensitive data (e.g., passwords, API keys, tokens).
+	patterns := []string{
+		`(?i)(password\s*=\s*).*?(\s|$)`,       // Matches "password=..."
+		`(?i)(api[-_]?key\s*=\s*).*?(\s|$)`,    // Matches "apiKey=..." or "api-key=..."
+		`(?i)(token\s*=\s*).*?(\s|$)`,          // Matches "token=..."
+	}
+	redactedMessage := message
+	for _, pattern := range patterns {
+		re := regexp.MustCompile(pattern)
+		redactedMessage = re.ReplaceAllString(redactedMessage, "${1}[REDACTED]${2}")
+	}
+	return redactedMessage
 }
