@@ -39,9 +39,9 @@ func sanitizeMessage(message string) string {
 		pattern string
 		repl    string
 	}{
-		{`(?i)password\s*:\s*\S+`, "password: [REDACTED]"},
-		{`(?i)private\s*key\s*:\s*\S+`, "private key: [REDACTED]"},
-		{`(?i)secret\s*:\s*\S+`, "secret: [REDACTED]"},
+		{`(?i)password\s*:\s*(?:"[^"]*"|\S.*)`, "password: [REDACTED]"},
+		{`(?i)private\s*key\s*:\s*(?:"[^"]*"|\S.*)`, "private key: [REDACTED]"},
+		{`(?i)secret\s*:\s*(?:"[^"]*"|\S.*)`, "secret: [REDACTED]"},
 	}
 	for _, r := range replacements {
 		re := regexp.MustCompile(r.pattern)
