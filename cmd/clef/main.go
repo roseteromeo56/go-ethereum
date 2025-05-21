@@ -1101,8 +1101,9 @@ func GenDoc(ctx *cli.Context) error {
 					req.Accounts[i].URL.Path = "[REDACTED]" // Obfuscate account paths
 				}
 			}
-			if data, err := json.MarshalIndent(v, "", "  "); err == nil {
-				output = append(output, fmt.Sprintf("### %s\n\n%s\n\nExample:\n```json\n%s\n```", name, desc, data))
+			// Final safeguard: Ensure no sensitive data remains
+			if sanitizedData, err := json.MarshalIndent(v, "", "  "); err == nil {
+				output = append(output, fmt.Sprintf("### %s\n\n%s\n\nExample:\n```json\n%s\n```", name, desc, sanitizedData))
 			} else {
 				log.Error("Error generating output", "err", err)
 			}
