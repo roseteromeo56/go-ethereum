@@ -50,6 +50,16 @@ func newWithTestJS(t *testing.T, testjs string) *JSRE {
 	return jsre
 }
 
+func TestRandomSource(t *testing.T) {
+	source := randomSource()
+	for i := 0; i < 100; i++ {
+		value := source()
+		if value < 0 || value >= 1 {
+			t.Fatalf("random source returned value outside [0, 1): %f", value)
+		}
+	}
+}
+
 func TestExec(t *testing.T) {
 	t.Parallel()
 
