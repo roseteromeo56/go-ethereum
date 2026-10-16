@@ -23,7 +23,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"crypto/rand"
 	"os"
 	"time"
 
@@ -95,16 +94,15 @@ func New(assetPath string, output io.Writer) *JSRE {
 	return re
 }
 
-// randomSource returns a pseudo random value generator.
-func randomSource() *rand.Rand {
-	bytes := make([]byte, 8)
-	seed := time.Now().UnixNano()
-	if _, err := crand.Read(bytes); err == nil {
-		seed = int64(binary.LittleEndian.Uint64(bytes))
+// randomSource returns a cryptographically secure random value generator.
+func randomSource() func() float64 {
+	return func() float64 {
+		var bytes [8]byte
+		if _, err := crand.Read(bytes[:]); err != nil {
+			panic("reading from crypto/rand failed: " + err.Error())
+		}
+		return float64(binary.LittleEndian.Uint64(bytes[:])>>11) / (1 << 53)
 	}
-
-	src := rand.NewSource(seed)
-	return rand.New(src)
 }
 
 // This function runs the main event loop from a goroutine that is started
@@ -119,8 +117,7 @@ func randomSource() *rand.Rand {
 func (re *JSRE) runEventLoop() {
 	defer close(re.closed)
 
-	r := randomSource()
-	re.vm.SetRandSource(r.Float64)
+	re.vm.SetRandSource(randomSource())
 
 	registry := map[*jsTimer]*jsTimer{}
 	ready := make(chan *jsTimer)
