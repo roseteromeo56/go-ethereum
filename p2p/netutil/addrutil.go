@@ -18,7 +18,7 @@ package netutil
 
 import (
 	"fmt"
-	"math/rand"
+	"crypto/rand"
 	"net"
 	"net/netip"
 )
