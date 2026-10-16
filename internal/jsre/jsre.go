@@ -23,7 +23,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"math/rand"
+	"crypto/rand"
 	"os"
 	"time"
 
