@@ -24,7 +24,7 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"errors"
-	"math/rand"
+	"crypto/rand"
 	"reflect"
 	"strings"
 	"sync"
