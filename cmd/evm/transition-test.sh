@@ -365,7 +365,7 @@ demo "cat signed_txs.rlp"
 echo "We can use \`rlpdump\` to check what the contents are: "
 echo "$ticks"
 echo "rlpdump -hex \$(cat signed_txs.rlp | jq -r )"
-rlpdump -hex $(cat signed_txs.rlp | jq -r )
+rlpdump -hex "$(cat signed_txs.rlp | jq -r )"
 echo "$ticks"
 echo "Now, we can now use those (or any other already signed transactions), as input, like so: "
 cmd="./evm t8n --state.fork=London --input.alloc=./testdata/13/alloc.json --input.txs=./signed_txs.rlp --input.env=./testdata/13/env.json --output.result=alloc_rlptx.json"
